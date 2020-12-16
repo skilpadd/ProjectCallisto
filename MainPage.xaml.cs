@@ -2,6 +2,7 @@
 using PdfSharpCore.Pdf.IO;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -10,12 +11,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace ProjectCallisto
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
-        List<PdfDocument> Documents = new List<PdfDocument>();
+        ObservableCollection<Document> Documents = new ObservableCollection<Document>();
         IReadOnlyList<StorageFile> Files { get; set; }
 
         public MainPage()
@@ -34,6 +32,8 @@ namespace ProjectCallisto
 
             Files = await openPicker.PickMultipleFilesAsync();
             CreateDocuments();
+
+            DocumentsListView.ItemsSource = Documents;
         }
 
         private async void CreateDocuments()
@@ -44,7 +44,11 @@ namespace ProjectCallisto
                 {
                     using (var stream = await file.OpenStreamForReadAsync())
                     {
-                        Documents.Add(PdfReader.Open(stream, PdfDocumentOpenMode.Import));
+                        var document = new Document(PdfReader.Open(stream, PdfDocumentOpenMode.Import));
+                        document.Name = file.DisplayName;
+                        document.DateCreated = file.DateCreated;
+                        document.Path = file.Path;
+                        Documents.Add(document);
                     }               
                 }
             }
@@ -58,11 +62,11 @@ namespace ProjectCallisto
             {
                 foreach (var document in Documents)
                 {
-                    foreach (var page in document.Pages)
+                    foreach (var page in document.Pdf.Pages)
                     {
                         resultDocument.AddPage(page);
                     }
-                    document.Close();
+                    document.Pdf.Close();
                 }
             }
 
@@ -88,6 +92,22 @@ namespace ProjectCallisto
                     }
                 }
             }
+        }
+    }
+
+    class Document
+    {
+        public PdfDocument Pdf { get; }
+        public int PageCount { get; }
+        public long FileSize { get; }
+        public string Name { get; set; }
+        public string Path { get; set; }
+        public DateTimeOffset DateCreated { get; set; }
+
+        public Document(PdfDocument pdfDocument)
+        {
+            Pdf = pdfDocument;
+            PageCount = Pdf.PageCount;
         }
     }
 }
