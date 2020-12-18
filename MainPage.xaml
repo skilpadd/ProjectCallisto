@@ -14,7 +14,7 @@
             <AppBarButton x:Name="AddButton" Icon="Add" Label="Add PDF Files" Click="AddButton_Click"/>
             <AppBarButton x:Name="MergeButton" Icon="Page2" Label="Merge Files" Click="MergeButton_Click"/>
         </CommandBar>
-        <ListView x:Name="DocumentsListView" CanReorderItems="True" AllowDrop="True" Margin="0,72,0,0" HorizontalAlignment="Stretch" >
+        <ListView x:Name="DocumentsListView" CanReorderItems="True" AllowDrop="True" Margin="0,72,0,0" HorizontalAlignment="Stretch" ItemsSource="{x:Bind Documents}">
             <ListView.HeaderTemplate>
                 <DataTemplate>
                     <Grid Padding="12" Background="{ThemeResource SystemBaseLowColor}">
