@@ -1,6 +1,5 @@
-﻿using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.IO;
-using System;
+﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -8,6 +7,8 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.IO;
 
 namespace ProjectCallisto
 {
@@ -49,7 +50,7 @@ namespace ProjectCallisto
                         document.DateCreated = file.DateCreated;
                         document.Path = file.Path;
                         Documents.Add(document);
-                    }               
+                    }
                 }
             }
         }
@@ -84,7 +85,7 @@ namespace ProjectCallisto
             var newDocument = await savePicker.PickSaveFileAsync();
             if (newDocument != null)
             {
-                using (var mergedDocument = MergeDocuments())
+                using (var mergedDocument = await Task.Run(() => MergeDocuments()))
                 {
                     using (var stream = await newDocument.OpenStreamForWriteAsync())
                     {
