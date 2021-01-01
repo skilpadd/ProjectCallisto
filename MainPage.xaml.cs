@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.IO;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -32,26 +33,42 @@ namespace ProjectCallisto
             openPicker.FileTypeFilter.Add(".pdf");
 
             Files = await openPicker.PickMultipleFilesAsync();
-            CreateDocuments();
 
-            DocumentsListView.ItemsSource = Documents;
+            var documents = await CreateDocumentsAsync();
+            foreach (var document in documents)
+            {
+                Documents.Add(document);
+            }
         }
 
-        private async void CreateDocuments()
+        private List<Document> CreateDocuments()
         {
-            if (Files != null)
+            var documents = new List<Document>();
+            var tasks = Files.AsParallel().Select(async file => await CreateDocumentAsync(file)).ToList();
+            foreach (var task in tasks)
             {
-                foreach (var file in Files)
+                documents.Add(task.Result);
+            }
+
+            return documents;
+        }
+
+        private async Task<List<Document>> CreateDocumentsAsync()
+        {
+            return await Task.Run(() => CreateDocuments());
+        }
+
+        private async Task<Document> CreateDocumentAsync(StorageFile file)
+        {
+            using (var stream = await file.OpenStreamForReadAsync())
+            {
+                var document = new Document(PdfReader.Open(stream, PdfDocumentOpenMode.Import))
                 {
-                    using (var stream = await file.OpenStreamForReadAsync())
-                    {
-                        var document = new Document(PdfReader.Open(stream, PdfDocumentOpenMode.Import));
-                        document.Name = file.DisplayName;
-                        document.DateCreated = file.DateCreated;
-                        document.Path = file.Path;
-                        Documents.Add(document);
-                    }
-                }
+                    Name = file.DisplayName,
+                    DateCreated = file.DateCreated,
+                    Path = file.Path
+                };
+                return document;
             }
         }
 
