@@ -91,6 +91,11 @@ namespace ProjectCallisto
             return resultDocument;
         }
 
+        private async Task<PdfDocument> MergeDocumentsAsync()
+        {
+            return await Task.Run(() => MergeDocuments());
+        }
+
         private async void MergeButton_Click(object sender, RoutedEventArgs e)
         {
             var savePicker = new FileSavePicker();
@@ -102,7 +107,7 @@ namespace ProjectCallisto
             var newDocument = await savePicker.PickSaveFileAsync();
             if (newDocument != null)
             {
-                using (var mergedDocument = await Task.Run(() => MergeDocuments()))
+                using (var mergedDocument = await MergeDocumentsAsync())
                 {
                     using (var stream = await newDocument.OpenStreamForWriteAsync())
                     {
