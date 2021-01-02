@@ -15,36 +15,26 @@
             <AppBarButton x:Name="MergeButton" Icon="Page2" Label="Merge Files" Click="MergeButton_Click"/>
         </CommandBar>
         <ListView x:Name="DocumentsListView" CanReorderItems="True" AllowDrop="True" Margin="0,72,0,0" HorizontalAlignment="Stretch" ItemsSource="{x:Bind Documents}">
-            <ListView.HeaderTemplate>
-                <DataTemplate>
-                    <Grid Padding="12" Background="{ThemeResource SystemBaseLowColor}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="400"/>
-                            <ColumnDefinition Width="200"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Name" Grid.Column="0" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                        <TextBlock Text="Pages" Grid.Column="1" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                        <TextBlock Text="Storage" Grid.Column="2" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                        <TextBlock Text="Date Created" Grid.Column="3" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.HeaderTemplate>
             <ListView.ItemTemplate>
-                <DataTemplate x:Name="TableDataTemplate">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200" />
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="400" />
-                            <ColumnDefinition Width="200" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock VerticalAlignment="Center" Grid.Column="0" Text="{Binding Name}" />
-                        <TextBlock VerticalAlignment="Center" Grid.Column="1" Text="{Binding PageCount}" />
-                        <TextBlock VerticalAlignment="Center" Grid.Column="2" Text="{Binding Path}" />
-                        <TextBlock VerticalAlignment="Center" Grid.Column="3" Text="{Binding DateCreated.LocalDateTime}"/>
-                    </Grid>
+                <DataTemplate x:Name="ListDataTemplate">
+                    <StackPanel Orientation="Vertical" Spacing="10" Padding="20">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock>File Name:</TextBlock>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock>Path:</TextBlock>
+                            <TextBlock Text="{Binding Path}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock>Pages:</TextBlock>
+                            <TextBlock Text="{Binding PageCount}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock>Date:</TextBlock>
+                            <TextBlock Text="{Binding DateCreated.LocalDateTime}"/>
+                        </StackPanel>
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
