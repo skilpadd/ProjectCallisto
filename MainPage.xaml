@@ -5,6 +5,7 @@
     xmlns:local="using:ProjectCallisto"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -38,6 +39,10 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
+        <muxc:InfoBar x:Name="DocumentInfoBar" IsOpen="False" Title="The document was created and is now ready to use. " Severity="Success" VerticalAlignment="Bottom">
+            <muxc:InfoBar.ActionButton>
+                <Button x:Name="InfoBarButton" Click="InfoBarButton_Click">Open The Document</Button>
+            </muxc:InfoBar.ActionButton>
+        </muxc:InfoBar>
     </Grid>
 </Page>

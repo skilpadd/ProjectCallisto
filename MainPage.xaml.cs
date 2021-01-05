@@ -1,15 +1,16 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.IO;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.System;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.IO;
 
 namespace ProjectCallisto
 {
@@ -17,6 +18,7 @@ namespace ProjectCallisto
     {
         ObservableCollection<Document> Documents = new ObservableCollection<Document>();
         IReadOnlyList<StorageFile> Files { get; set; }
+        StorageFile ResultDocument { get; set; }
 
         public MainPage()
         {
@@ -105,15 +107,32 @@ namespace ProjectCallisto
             savePicker.CommitButtonText = "Save";
 
             var newDocument = await savePicker.PickSaveFileAsync();
+
             if (newDocument != null)
             {
                 using (var mergedDocument = await MergeDocumentsAsync())
                 {
-                    using (var stream = await newDocument.OpenStreamForWriteAsync())
+                    if (mergedDocument.PageCount > 0)
                     {
-                        mergedDocument.Save(stream, true);
+                        using (var stream = await newDocument.OpenStreamForWriteAsync())
+                        {
+                            mergedDocument.Save(stream, true);
+                        }
+
+                        ResultDocument = newDocument;
+                        DocumentInfoBar.IsOpen = true;
                     }
                 }
+            }
+        }
+
+        private async void InfoBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            var success = await Launcher.LaunchFileAsync(ResultDocument);
+
+            if (success)
+            {
+                DocumentInfoBar.IsOpen = false;
             }
         }
     }
