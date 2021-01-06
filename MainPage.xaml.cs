@@ -135,6 +135,14 @@ namespace ProjectCallisto
                 DocumentInfoBar.IsOpen = false;
             }
         }
+
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Documents.Count > 0)
+            {
+                Documents.Clear();
+            }
+        }
     }
 
     class Document
