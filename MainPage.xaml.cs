@@ -11,6 +11,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace ProjectCallisto
 {
@@ -19,6 +20,8 @@ namespace ProjectCallisto
         ObservableCollection<Document> Documents = new ObservableCollection<Document>();
         IReadOnlyList<StorageFile> Files { get; set; }
         StorageFile ResultDocument { get; set; }
+        StandardUICommand DeleteCommand { get; set; } = new StandardUICommand(StandardUICommandKind.Delete);
+        Document SelectedDocument { get; set; }
 
         public MainPage()
         {
@@ -98,6 +101,14 @@ namespace ProjectCallisto
             return await Task.Run(() => MergeDocuments());
         }
 
+        private void DeleteCommand_ExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
+        {
+            if (SelectedDocument != null)
+            {
+                Documents.Remove(SelectedDocument);
+            }
+        }
+
         private async void MergeButton_Click(object sender, RoutedEventArgs e)
         {
             var savePicker = new FileSavePicker();
@@ -142,6 +153,16 @@ namespace ProjectCallisto
             {
                 Documents.Clear();
             }
+        }
+
+        private void DocumentsListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            DeleteCommand.ExecuteRequested += DeleteCommand_ExecuteRequested;
+        }
+
+        private void DocumentsListView_GotFocus(object sender, RoutedEventArgs e)
+        {
+            SelectedDocument = (e.OriginalSource as ListViewItem).Content as Document;
         }
     }
 
