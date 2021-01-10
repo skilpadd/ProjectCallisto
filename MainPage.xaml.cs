@@ -48,13 +48,7 @@ namespace ProjectCallisto
 
         private List<Document> CreateDocuments()
         {
-            var documents = new List<Document>();
-            var tasks = Files.AsParallel().Select(async file => await CreateDocumentAsync(file)).ToList();
-            foreach (var task in tasks)
-            {
-                documents.Add(task.Result);
-            }
-
+            var documents = Files.AsParallel().Select(file => CreateDocument(file)).ToList();
             return documents;
         }
 
@@ -63,18 +57,10 @@ namespace ProjectCallisto
             return await Task.Run(() => CreateDocuments());
         }
 
-        private async Task<Document> CreateDocumentAsync(StorageFile file)
+        private Document CreateDocument(StorageFile file)
         {
-            using (var stream = await file.OpenStreamForReadAsync())
-            {
-                var document = new Document(PdfReader.Open(stream, PdfDocumentOpenMode.Import))
-                {
-                    Name = file.DisplayName,
-                    DateCreated = file.DateCreated,
-                    Path = file.Path
-                };
-                return document;
-            }
+            var document = new Document(file);
+            return document;
         }
 
         private PdfDocument MergeDocuments()
@@ -171,14 +157,27 @@ namespace ProjectCallisto
         public PdfDocument Pdf { get; }
         public int PageCount { get; }
         public long FileSize { get; }
-        public string Name { get; set; }
-        public string Path { get; set; }
-        public DateTimeOffset DateCreated { get; set; }
+        public string Name { get; }
+        public string Path { get; }
+        public DateTimeOffset DateCreated { get; }
 
-        public Document(PdfDocument pdfDocument)
+        public Document(StorageFile file)
         {
-            Pdf = pdfDocument;
+            Pdf = CreateDocument(file).Result;
             PageCount = Pdf.PageCount;
+            Name = file.DisplayName;
+            DateCreated = file.DateCreated;
+            Path = file.Path;
+        }
+
+        async Task<PdfDocument> CreateDocument(StorageFile file)
+        {
+            PdfDocument pdfDocument;
+            using (var stream = await file.OpenStreamForReadAsync())
+            {
+                pdfDocument = PdfReader.Open(stream, PdfDocumentOpenMode.Import);
+            }
+            return pdfDocument;
         }
     }
 }
