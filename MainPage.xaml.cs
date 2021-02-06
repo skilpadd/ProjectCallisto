@@ -48,7 +48,7 @@ namespace ProjectCallisto
 
         private List<Document> CreateDocuments()
         {
-            var documents = Files.AsParallel().Select(file => CreateDocument(file)).ToList();
+            var documents = Files.AsParallel().AsOrdered().Select(file => CreateDocument(file)).ToList();
             return documents;
         }
 
