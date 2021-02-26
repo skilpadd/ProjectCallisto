@@ -16,7 +16,7 @@
             <AppBarButton x:Name="AddButton" Icon="Add" Label="Add PDF Files" Click="AddButton_Click"/>
             <AppBarButton x:Name="MergeButton" Icon="Page2" Label="Merge Files" Click="MergeButton_Click"/>
         </CommandBar>
-        <ListView x:Name="DocumentsListView" CanReorderItems="True" AllowDrop="True" Margin="0,72,0,0" HorizontalAlignment="Stretch" ItemsSource="{x:Bind Documents}" Loaded="DocumentsListView_Loaded" GotFocus="DocumentsListView_GotFocus">
+        <ListView x:Name="DocumentsListView" CanReorderItems="True" AllowDrop="True" Margin="0,72,0,0" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Documents, Mode=OneWay}" Loaded="DocumentsListView_Loaded" GotFocus="DocumentsListView_GotFocus">
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="ListDataTemplate">
                     <StackPanel Orientation="Vertical" Spacing="10" Padding="20">
@@ -44,14 +44,14 @@
                     <Setter Property="ContextFlyout">
                         <Setter.Value>
                             <MenuFlyout>
-                                <MenuFlyoutItem ToolTipService.ToolTip="Delete the selected document" Command="{x:Bind DeleteCommand}"/>
+                                <MenuFlyoutItem ToolTipService.ToolTip="Delete the selected document" Command="{x:Bind ViewModel.DeleteCommand}"/>
                             </MenuFlyout>
                         </Setter.Value>
                     </Setter>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <muxc:InfoBar x:Name="DocumentInfoBar" IsOpen="False" Title="The document was created and is now ready to use." Severity="Success" VerticalAlignment="Bottom">
+        <muxc:InfoBar x:Name="DocumentInfoBar" Title="The document was created and is now ready to use." Severity="Success" VerticalAlignment="Bottom" IsOpen="{x:Bind ViewModel.InfoBarIsOpen, Mode=OneWay}">
             <muxc:InfoBar.ActionButton>
                 <Button x:Name="InfoBarButton" Click="InfoBarButton_Click">Open The Document</Button>
             </muxc:InfoBar.ActionButton>
