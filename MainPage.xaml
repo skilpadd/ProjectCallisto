@@ -19,22 +19,25 @@
         <ListView x:Name="DocumentsListView" CanReorderItems="True" AllowDrop="True" Margin="0,72,0,0" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Documents, Mode=OneWay}" Loaded="DocumentsListView_Loaded" GotFocus="DocumentsListView_GotFocus">
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="ListDataTemplate">
-                    <StackPanel Orientation="Vertical" Spacing="10" Padding="20">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <TextBlock>File Name:</TextBlock>
-                            <TextBlock Text="{Binding Name}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <TextBlock>Path:</TextBlock>
-                            <TextBlock Text="{Binding Path}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <TextBlock>Pages:</TextBlock>
-                            <TextBlock Text="{Binding PageCount}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <TextBlock>Date:</TextBlock>
-                            <TextBlock Text="{Binding DateCreated.LocalDateTime}"/>
+                    <StackPanel Orientation="Horizontal" Padding="10">
+                        <Image Source="{Binding PdfCover}" Height="200"/>
+                        <StackPanel Orientation="Vertical" Spacing="10" Padding="20">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <TextBlock>File Name:</TextBlock>
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <TextBlock>Path:</TextBlock>
+                                <TextBlock Text="{Binding Path}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <TextBlock>Pages:</TextBlock>
+                                <TextBlock Text="{Binding PageCount}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <TextBlock>Date:</TextBlock>
+                                <TextBlock Text="{Binding DateCreated.LocalDateTime}"/>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </DataTemplate>

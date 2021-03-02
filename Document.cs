@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
+using WinPdf = Windows.Data.Pdf;
 using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.UI.Xaml.Media.Imaging;
 using PdfSharpCore.Pdf;
 using PdfSharpCore.Pdf.IO;
 
@@ -12,6 +15,8 @@ namespace ProjectCallisto
     class Document
     {
         public PdfDocument Pdf { get; }
+        private WinPdf.PdfDocument WnPdf { get; }
+        public BitmapImage PdfCover { get; set; }
         public int PageCount { get; }
         public long FileSize { get; }
         public string Name { get; }
@@ -20,14 +25,15 @@ namespace ProjectCallisto
 
         public Document(StorageFile file)
         {
-            Pdf = CreateDocument(file).Result;
+            Pdf = CreateDocumentAsync(file).Result;
+            WnPdf = OpenWnPdfAsync(file).Result;
             PageCount = Pdf.PageCount;
             Name = file.DisplayName;
             DateCreated = file.DateCreated;
             Path = file.Path;
         }
 
-        async Task<PdfDocument> CreateDocument(StorageFile file)
+        async Task<PdfDocument> CreateDocumentAsync(StorageFile file)
         {
             PdfDocument pdfDocument;
             using (var stream = await file.OpenStreamForReadAsync())
@@ -35,6 +41,26 @@ namespace ProjectCallisto
                 pdfDocument = PdfReader.Open(stream, PdfDocumentOpenMode.Import);
             }
             return pdfDocument;
+        }
+
+        async Task<WinPdf.PdfDocument> OpenWnPdfAsync(StorageFile file)
+        {
+            var document = await WinPdf.PdfDocument.LoadFromFileAsync(file);
+            return document;
+        }
+
+        public async Task LoadPdfCoverAsync()
+        {
+            var page = WnPdf.GetPage(0);
+            var image = new BitmapImage();
+
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                await page.RenderToStreamAsync(stream);
+                await image.SetSourceAsync(stream);
+            }
+
+            PdfCover = image;
         }
 
         public static List<Document> CreateDocuments(IEnumerable<StorageFile> files)

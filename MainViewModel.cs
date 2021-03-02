@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using Windows.System;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -23,7 +22,7 @@ namespace ProjectCallisto
                 OnPropertyChanged("Documents");
             }
         }
-        //public List<StorageFile> Files { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public StandardUICommand DeleteCommand { get; set; } = new StandardUICommand(StandardUICommandKind.Delete);
         public bool InfoBarIsOpen
@@ -68,7 +67,12 @@ namespace ProjectCallisto
             var files = await openPicker.PickMultipleFilesAsync();
 
             var documents = await Document.CreateDocumentsAsync(files);
-            
+
+            foreach (var document in documents)
+            {
+                await document.LoadPdfCoverAsync();
+            }
+
             foreach (var document in documents)
             {
                 Documents.Add(document);
